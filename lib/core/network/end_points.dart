@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 class EndPoints {
-  static const String baseUrl = "https://a3a3-156-197-155-244.ngrok-free.app/api";
+  static const String baseUrl = "https://95cd2b38ab2c.ngrok-free.app/api";
 
   // Auth
   static const String register = "$baseUrl/register";

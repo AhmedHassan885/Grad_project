@@ -10,8 +10,8 @@ class CustomTextOneAndTextTwo extends StatelessWidget {
   Widget build(BuildContext context) {
     final Cubit = AuthCubit.get(context);
     final userinfo = Cubit.userModellogin;
-    return Padding(
-      padding: const EdgeInsets.only(left: 40),
+    return  Padding(
+      padding:  EdgeInsets.only(left: 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

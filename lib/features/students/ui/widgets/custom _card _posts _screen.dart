@@ -1,28 +1,16 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:grad_project/core/helper/functions/custom_bottom%20navigation_bar.dart';
 import 'package:grad_project/core/resource_manager/app_assets.dart';
+import 'package:grad_project/features/students/data/model/all_posts_model/AllPostsModel.dart';
 
-class CustomCardPostsScreen extends StatefulWidget {
-  const CustomCardPostsScreen({super.key});
+class CustomCardPostItem extends StatelessWidget {
+  final AllPostModel postModel;
 
-  @override
-  State<CustomCardPostsScreen> createState() => _CustomCardPostsScreenState();
-}
+  const CustomCardPostItem({super.key, required this.postModel});
 
-class _CustomCardPostsScreenState extends State<CustomCardPostsScreen> {
-  int likeCount = 22;
-  int commentCount = 22;
-  bool isLiked = false;
-
-  void toggleLike() {
-    setState(() {
-      isLiked = !isLiked;
-      likeCount += isLiked ? 1 : -1;
-    });
-  }
-
-  void openCommentSheet() {
+  void openCommentSheet(BuildContext context) {
     TextEditingController commentController = TextEditingController();
 
     showModalBottomSheet(
@@ -33,24 +21,21 @@ class _CustomCardPostsScreenState extends State<CustomCardPostsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Add a comment",
+              const Text("Add a comment",
                   style: TextStyle(fontWeight: FontWeight.bold)),
               TextField(
                 controller: commentController,
                 decoration:
-                    InputDecoration(hintText: "Write your comment here"),
+                const InputDecoration(hintText: "Write your comment here"),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
                   if (commentController.text.trim().isNotEmpty) {
-                    setState(() {
-                      commentCount++;
-                    });
                     Navigator.pop(context);
                   }
                 },
-                child: Text("Post"),
+                child: const Text("Post"),
               )
             ],
           ),
@@ -61,101 +46,99 @@ class _CustomCardPostsScreenState extends State<CustomCardPostsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Transform.translate(
-      offset: Offset(0, 40),
-      child: Container(
-        width: double.infinity,
-        height: 300,
-        margin: EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(25)),
-          border: Border.all(color: Colors.grey.shade300),
-          boxShadow: [
-            BoxShadow(color: Colors.grey, blurRadius: 6, offset: Offset(0, 5)),
-            BoxShadow(color: Colors.grey, blurRadius: 6, offset: Offset(0, -3)),
-          ],
-          color: Colors.white,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Column(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: const [
+          BoxShadow(color: Colors.grey, blurRadius: 6, offset: Offset(0, 5)),
+          BoxShadow(color: Colors.grey, blurRadius: 6, offset: Offset(0, -3)),
+        ],
+        color: Colors.white,
+      ),
+      child: Column(
+        children: [
+          // Profile Row
+          Row(
             children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    child: Image(image: AssetImage(AppAssets.post_profile)),
-                  ),
-                  SizedBox(width: 20),
-                  Text("mohamed ahmed",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, fontSize: 17.47)),
-                  Spacer(),
-                  Icon(Icons.more_vert, size: 26)
-                ],
+              const CircleAvatar(
+                backgroundImage: AssetImage(AppAssets.post_profile),
               ),
-              SizedBox(height: 20),
-              Text("Thank you for all student in my account",
-                  style:
-                      TextStyle(fontSize: 17.47, fontWeight: FontWeight.w500)),
-              SizedBox(height: 40),
-              Row(
-                children: [
-                  // GestureDetector(
-                  //   onTap: toggleLike,
-                  //   child: Icon(
-                  //     Icons.favorite,
-                  //     color: isLiked ? Colors.red : Colors.grey,
-                  //     size: 28,
-                  //   ),
-                  // ),
-                  // SizedBox(width: 8),
-                  // Text("$likeCount",
-                  //     style:
-                  //         TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-                  // SizedBox(width: 22),
-                  GestureDetector(
-                    onTap: openCommentSheet,
-                    child: Icon(Icons.chat_bubble_outline,
-                        size: 28, color: Colors.grey[700]),
-                  ),
-                  SizedBox(width: 8),
-                  Text("$commentCount",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-                  // Spacer(),
-                  // Text("Liked by ${340 + (isLiked ? 1 : 0)}",
-                  //     style: TextStyle(
-                  //         fontWeight: FontWeight.w700, fontSize: 15.29)),
-                ],
-              ),
-              Spacer(),
-              GestureDetector(
-                onTap: openCommentSheet,
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundImage: AssetImage(AppAssets.doctor),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
-                          "Add a comment",
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              const SizedBox(width: 12),
+              Text(
+               postModel.instructor?.user?.name ?? "No name",
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 17,
                 ),
+              ),
+              const Spacer(),
+              const Icon(Icons.more_vert),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // Post Content
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              postModel.content ?? "No content",
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 30),
+
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () => openCommentListSheet(context, postModel.comments ?? []),
+                child: Icon(Icons.chat_bubble_outline,
+                    size: 28, color: Colors.grey[700]),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "${postModel.comments?.length ?? 0}",
+                style: const TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.w500),
               ),
             ],
           ),
-        ),
+
+          const SizedBox(height: 20),
+
+          // Add comment bar
+          GestureDetector(
+            onTap: () => openCommentSheet(context),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 16,
+                  backgroundImage: AssetImage(AppAssets.doctor),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Add a comment...",
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

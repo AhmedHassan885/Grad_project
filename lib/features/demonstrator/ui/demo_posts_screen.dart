@@ -1,7 +1,6 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
-import 'package:grad_project/features/students/ui/widgets/custom%20_card%20_posts%20_screen.dart';
 import 'package:grad_project/features/students/ui/widgets/custom%20text%20_one%20_and%20_text%20_two.dart';
 
 class DemoPostsScreen extends StatelessWidget {
@@ -24,13 +23,13 @@ class DemoPostsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomTextOneAndTextTwo(),
-                          CustomCardPostsScreen(),
+                          // CustomCardPostsScreen(),
                         ],
                       )),
                 ],
               ),
               SizedBox(height: 20),
-              CustomCardPostsScreen(),
+              // CustomCardPostsScreen(),
             ]),
           ],
         ));

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 
@@ -26,13 +28,18 @@ class DefaultContainer extends StatelessWidget {
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
                 blurRadius: 4,
-                offset: Offset(0, 2),
+                offset: const Offset(0, 2),
               ),
             ],
             color: Colors.white,
             borderRadius: BorderRadius.circular(7),
           ),
-          child: Align(alignment: Alignment.centerLeft, child: Text(title))),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 18),
+              ))),
     );
   }
 }
