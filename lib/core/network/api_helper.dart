@@ -1,5 +1,4 @@
-// ignore_for_file: avoid_print
-
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:grad_project/core/local/local_data.dart';
 import 'package:grad_project/core/network/end_points.dart';
@@ -17,53 +16,57 @@ class APIHelper {
   // declaring dio
   Dio dio = Dio(
     BaseOptions(
-      baseUrl: EndPoints.baseURL,
-      connectTimeout: Duration(seconds: 10),
-      sendTimeout: Duration(seconds: 10),
-      receiveTimeout: Duration(seconds: 10),
+      baseUrl: EndPoints.baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      sendTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
     ),
   );
 
-  // get request
-
-  Future<ApiResponse> getRequest({
-    required String endPoint,
-    Map<String, dynamic>? data,
-    bool isFormData = true,
-    bool isAuthorized = true,
-  }) async {
+  Future<ApiResponse> _checkConnectivityAndMakeRequest(Future<Response> Function() request) async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      return ApiResponse(
+        status: false,
+        statusCode: 0,
+        message: "No internet connection. Please check your network settings.",
+      );
+    }
     try {
-      var response = await dio.get(endPoint,
-          data: isFormData ? FormData.fromMap(data ?? {}) : data,
-          options: Options(headers: {
-            if (isAuthorized) "Authorization": "Bearer ${LocalData.accessToken}"
-          }));
+      var response = await request();
       return ApiResponse.fromResponse(response);
     } catch (e) {
       return ApiResponse.fromError(e);
     }
   }
 
-  // post
-
-  Future<ApiResponse> postRequest({
+  // get request
+  Future<ApiResponse> getRequest({
     required String endPoint,
     Map<String, dynamic>? data,
     bool isFormData = true,
     bool isAuthorized = true,
   }) async {
-    try {
-      var response = await dio.post(endPoint,
-          data: isFormData ? FormData.fromMap(data ?? {}) : data,
-          options: Options(headers: {
-            if (isAuthorized) "Authorization": "Bearer ${LocalData.accessToken}"
-          }));
+    return _checkConnectivityAndMakeRequest(() => dio.get(endPoint,
+        data: isFormData ? FormData.fromMap(data ?? {}) : data,
+        options: Options(headers: {
+          if (isAuthorized) "Authorization": "Bearer ${LocalData.accessToken}"
+        })));
+  }
 
-      return ApiResponse.fromResponse(response);
-    } catch (e) {
-      print("-----Error ${e.toString()}");
-      return ApiResponse.fromError(e);
-    }
+  // post
+  Future<ApiResponse> postRequest({
+    required String endPoint,
+    dynamic data,
+    bool isFormData = true,
+    bool isAuthorized = true,
+  }) async {
+    return _checkConnectivityAndMakeRequest(() => dio.post(endPoint,
+        data: isFormData ? (data != null ? FormData.fromMap(data) : null) : data,
+        options: Options(headers: {
+          if (isAuthorized) "Authorization": "Bearer ${LocalData.accessToken}",
+          if (!isFormData) "Content-Type": "application/json",
+        })));
   }
 
   Future<ApiResponse> putRequest({
@@ -72,16 +75,11 @@ class APIHelper {
     bool isFormData = true,
     bool isAuthorized = true,
   }) async {
-    try {
-      var response = await dio.put(endPoint,
-          data: isFormData ? FormData.fromMap(data ?? {}) : data,
-          options: Options(headers: {
-            if (isAuthorized) "Authorization": "Bearer ${LocalData.accessToken}"
-          }));
-      return ApiResponse.fromResponse(response);
-    } catch (e) {
-      return ApiResponse.fromError(e);
-    }
+    return _checkConnectivityAndMakeRequest(() => dio.put(endPoint,
+        data: isFormData ? FormData.fromMap(data ?? {}) : data,
+        options: Options(headers: {
+          if (isAuthorized) "Authorization": "Bearer ${LocalData.accessToken}"
+        })));
   }
 
   Future<ApiResponse> deleteRequest({
@@ -90,26 +88,11 @@ class APIHelper {
     bool isFormData = true,
     bool isAuthorized = true,
   }) async {
-    try {
-      var response = await dio.delete(endPoint,
-          data: isFormData ? FormData.fromMap(data ?? {}) : data,
-          options: Options(headers: {
-            if (isAuthorized) "Authorization": "Bearer ${LocalData.accessToken}"
-          }));
-      return ApiResponse.fromResponse(response);
-    } catch (e) {
-      return ApiResponse.fromError(e);
-    }
+    return _checkConnectivityAndMakeRequest(() => dio.delete(endPoint,
+        data: isFormData ? FormData.fromMap(data ?? {}) : data,
+        options: Options(headers: {
+          if (isAuthorized) "Authorization": "Bearer ${LocalData.accessToken}"
+        })));
   }
-
-  // Future<Options> getDefaultOptions({required bool isAuthorized}) async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //   return Options(
-  //     headers: {
-  //       if (isAuthorized)
-  //         "Authorization": "Bearer ${prefs.getString('access_token')}",
-  //     },
-  //   );
-  // }
 }
+

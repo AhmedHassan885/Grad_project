@@ -13,8 +13,7 @@ class AuthRepo {
   factory AuthRepo() => _instance;
 
   APIHelper apiHelper = APIHelper();
-    LoginResponseModel? model;
-
+  LoginResponseModel? model;
 
   Future<Either<String, String>> register(
       {required String email,
@@ -23,7 +22,7 @@ class AuthRepo {
       required String password,
       required String confirmPassword,
       required String phone,
-     }) async {
+      String? level}) async {
     try {
       ApiResponse apiResponse = await apiHelper.postRequest(
           endPoint: EndPoints.register,
@@ -34,8 +33,10 @@ class AuthRepo {
             "email": email,
             "phone": phone,
             "type": type,
-            
+            if (level != null) "level_id": level,
+            // "image": image, // Assuming image handling is done separately or is optional
           },
+          isFormData: true,
           isAuthorized: false);
 
       if (apiResponse.status) {
@@ -47,38 +48,57 @@ class AuthRepo {
       return Left(ApiResponse.fromError(e).message);
     }
   }
+
   Future<Either<String, UserModel>> login({
-  required String email,
-  required String password,
-}) async {
-  try {
-    ApiResponse apiResponse = await apiHelper.postRequest(
-      endPoint: EndPoints.login,
-      data: {
-        "email": email,
-        "password": password,
-      },
-      isAuthorized: false,
-    );
+    required String email,
+    required String password,
+  }) async {
+    try {
+      ApiResponse apiResponse = await apiHelper.postRequest(
+        endPoint: EndPoints.login,
+        data: {
+          "email": email,
+          "password": password,
+        },
+        isFormData:
+            true, // Postman shows query params, but typically login is form-data or JSON body
+        isAuthorized: false,
+      );
 
-    if (apiResponse.status) {
-      final loginResponse = LoginResponseModel.fromJson(apiResponse.data);
-      if (loginResponse.user == null) {
-        return Left("User data is missing.");
+      if (apiResponse.status) {
+        final loginResponse = LoginResponseModel.fromJson(apiResponse.data);
+        if (loginResponse.user == null) {
+          return Left("User data is missing.");
+        }
+        print("🔥 Response Data: ${apiResponse.data}");
+        LocalData.accessToken = loginResponse.accessToken;
+
+        return Right(loginResponse.user!);
+      } else {
+        return Left(apiResponse.message);
       }
-
-      // حفظ التوكن لو حابب
-      LocalData.accessToken = loginResponse.accessToken;
-
-      return Right(loginResponse.user!);
-    } else {
-      return Left(apiResponse.message);
+    } catch (e) {
+      return Left(ApiResponse.fromError(e).message);
     }
-  } catch (e) {
-    return Left(ApiResponse.fromError(e).message);
   }
-}
 
+  Future<Either<String, String>> logout() async {
+    try {
+      ApiResponse apiResponse = await apiHelper.getRequest(
+        endPoint: EndPoints.logout,
+        isAuthorized: true,
+      );
+
+      if (apiResponse.status) {
+        LocalData.accessToken = null; // Clear token on successful logout
+        return Right(apiResponse.message);
+      } else {
+        return Left(apiResponse.message);
+      }
+    } catch (e) {
+      return Left(ApiResponse.fromError(e).message);
+    }
+  }
 
   // Future<Either<String, UserModel>> Login(
   //     {required String email, required String password}) async {
@@ -108,7 +128,7 @@ class AuthRepo {
   //     if (model!=null && model!.user != null && model!.user!.name != null) {
   //       return Right(model!.user!.name! );
   //     } else {
-  //       throw Exception('Enter Your Name First');
+  //       throw Exception("Enter Your Name First");
   //     }
   //   } catch (e) {
   //     return Left(e.toString());

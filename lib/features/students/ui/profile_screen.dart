@@ -1,9 +1,11 @@
-// ignore_for_file: use_key_in_widget_constructors, sized_box_for_whitespace
+
+// ignore_for_file: use_key_in_widget_constructors, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:grad_project/core/helper/navigator.dart';
 import 'package:grad_project/core/resource_manager/app_assets.dart';
 import 'package:grad_project/core/widgets/inputs/default_container.dart';
+import 'package:grad_project/features/auth/manager/auth_cubit.dart';
 import 'package:grad_project/features/students/ui/demonstrator_stud_screen.dart';
 import 'package:grad_project/features/students/ui/edit_profile_screen.dart';
 import 'package:grad_project/features/students/ui/old_materials_screen.dart';
@@ -17,6 +19,8 @@ class _ProfileState extends State<Profile> {
   int currentIndex = 2;
   @override
   Widget build(BuildContext context) {
+    final Cubit =AuthCubit.get(context);
+    final userinfo = Cubit.userModellogin;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(children: [
@@ -50,7 +54,7 @@ class _ProfileState extends State<Profile> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Ahmed Hassan",
+                        userinfo?.name ?? "User Name",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 24,

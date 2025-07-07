@@ -20,6 +20,7 @@ abstract class AppAssets {
     static const String post_profile = "assets/images/post_profile.png";
     static const String Doctorr = "assets/images/Doctorr.png";
     static const String management = "assets/images/management.png";
+    static const String university = "assets/images/zagazig-removebg-preview.png";
 
   //icons
     static const String pdf = "assets/icons/FilePdf.svg";

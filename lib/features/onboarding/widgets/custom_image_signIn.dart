@@ -15,7 +15,7 @@ class ImageWidget extends StatelessWidget {
     return SizedBox(
       width: screenWidth * widthFactor,
       height: screenHeight * heightFactor,
-      child: Image.asset(AppAssets.logo2, fit: BoxFit.cover),
+      child: Image.asset(AppAssets.university, fit: BoxFit.cover),
     );
   }
 }

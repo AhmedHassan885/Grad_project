@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:grad_project/core/helper/navigator.dart';
 import 'package:grad_project/core/resource_manager/app_assets.dart';
+import 'package:grad_project/core/resource_manager/app_color.dart';
 import 'package:grad_project/features/onboarding/onBoarding_screen.dart';
 
 
@@ -27,12 +28,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       body: Expanded(
         child: Container(
           decoration: BoxDecoration(
-           color:Color(0xff091B29),),
+           color: AppColor.white,
+          ),
           child: Center(child: Image(
-            image: AssetImage(AppAssets.logo),),),
+            image: AssetImage(AppAssets.university),),),
         ),
       ),
 

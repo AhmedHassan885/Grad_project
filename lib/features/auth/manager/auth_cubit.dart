@@ -21,11 +21,14 @@ class AuthCubit extends Cubit<AuthState> {
   final TextEditingController email_Controller = TextEditingController();
   final TextEditingController phone_Controller = TextEditingController();
   String? selectedRegisterType;
+  String? selectedLevel;
+
   // String? selectedLevel;
 
   final TextEditingController login_email_Controller = TextEditingController();
   final TextEditingController login_password_Controller =
       TextEditingController();
+      UserModel? userModellogin;
 
   void onRegister() async {
     emit(RegisterLoadingState());
@@ -36,6 +39,7 @@ class AuthCubit extends Cubit<AuthState> {
       phone: phone_Controller.text.trim(),
       confirmPassword: confirm_password_Controller.text,
       type: selectedRegisterType ?? 'Student',
+      level: selectedLevel
     );
     response.fold((String error) {
       emit(RegisterErrorState(error));
@@ -47,18 +51,29 @@ class AuthCubit extends Cubit<AuthState> {
   emit(LoginLoadingState());
 
   var response = await repo.login(
-    email: login_email_Controller.text.trim(),
+    email: login_email_Controller.text,
     password: login_password_Controller.text,
   );
 
   response.fold(
     (error) => emit(LoginErrorState(error)),
     (user) {
-      repo.model = LoginResponseModel(user: user); // لو بتخزنها مؤقتًا
-      emit(LoginSuccessState(user)); // بنمرر الـ UserModel
+      repo.model = LoginResponseModel(user: user);
+      userModellogin = user; // Store the user model for later use
+      emit(LoginSuccessState(user));
     },
   );
 }
+
+  void onLogout() async {
+    emit(LogoutLoadingState());
+    var response = await repo.logout();
+
+    response.fold(
+      (error) => emit(LogoutErrorState(error)),
+      (message) => emit(LogoutSuccessState(message)),
+    );
+  }
 
 
   // void onLogin() async {
@@ -82,3 +97,4 @@ class AuthCubit extends Cubit<AuthState> {
 
   // }
 }
+

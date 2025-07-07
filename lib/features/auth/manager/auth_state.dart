@@ -29,6 +29,18 @@ class LoginErrorState extends AuthState {
   LoginErrorState(this.error);
 }
 
+class LogoutLoadingState extends AuthState {}
+
+class LogoutSuccessState extends AuthState {
+  final String message;
+  LogoutSuccessState(this.message);
+}
+
+class LogoutErrorState extends AuthState {
+  final String error;
+  LogoutErrorState(this.error);
+}
+
 class GetUserLoading extends AuthState {}
 class GetUserSuccess extends AuthState {
  final String username; 
@@ -39,3 +51,4 @@ class GetUserError extends AuthState {
   String error;
   GetUserError(this.error);
 }
+
