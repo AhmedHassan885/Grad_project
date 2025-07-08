@@ -7,7 +7,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<void> downloadAndOpenFile(BuildContext context, String relativeUrl) async {
-  final baseUrl = "https://95cd2b38ab2c.ngrok-free.app/api";
+  final baseUrl = "https://9902bcdd27ca.ngrok-free.app/api";
   final fullUrl = baseUrl + relativeUrl;
 
   try {

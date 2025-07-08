@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:grad_project/core/services/service_locator.dart';
 import 'package:grad_project/features/auth/manager/auth_cubit.dart';
-import 'package:grad_project/features/students/ui/Bottom_nav_bar.dart';
+import 'package:grad_project/features/onboarding/splash_screen.dart';
 
 void main() {
   setupServiceLocator();
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: Colors.white,
           appBarTheme: const AppBarTheme(color: Colors.white)),
       debugShowCheckedModeBanner: false,
-      home: BottonNavBtn(),
+      home: SplashScreen(),
     );
   }
 }

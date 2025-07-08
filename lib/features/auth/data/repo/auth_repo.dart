@@ -6,6 +6,7 @@ import 'package:grad_project/core/network/api_helper.dart';
 import 'package:grad_project/core/network/api_response.dart';
 import 'package:grad_project/core/network/end_points.dart';
 import 'package:grad_project/features/auth/data/model/auth_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepo {
   AuthRepo._internal();
@@ -60,8 +61,7 @@ class AuthRepo {
           "email": email,
           "password": password,
         },
-        isFormData:
-            true, // Postman shows query params, but typically login is form-data or JSON body
+        isFormData: true,
         isAuthorized: false,
       );
 
@@ -70,7 +70,14 @@ class AuthRepo {
         if (loginResponse.user == null) {
           return Left("User data is missing.");
         }
+
         print("🔥 Response Data: ${apiResponse.data}");
+
+        // تخزين الـ token في SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+            'access_token', loginResponse.accessToken.toString());
+
         LocalData.accessToken = loginResponse.accessToken;
 
         return Right(loginResponse.user!);
@@ -82,23 +89,7 @@ class AuthRepo {
     }
   }
 
-  Future<Either<String, String>> logout() async {
-    try {
-      ApiResponse apiResponse = await apiHelper.getRequest(
-        endPoint: EndPoints.logout,
-        isAuthorized: true,
-      );
-
-      if (apiResponse.status) {
-        LocalData.accessToken = null; // Clear token on successful logout
-        return Right(apiResponse.message);
-      } else {
-        return Left(apiResponse.message);
-      }
-    } catch (e) {
-      return Left(ApiResponse.fromError(e).message);
-    }
-  }
+  
 
   // Future<Either<String, UserModel>> Login(
   //     {required String email, required String password}) async {

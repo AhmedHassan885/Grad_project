@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:grad_project/core/local/local_data.dart';
 import 'package:grad_project/core/network/end_points.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_response.dart';
 
@@ -24,8 +25,13 @@ class APIHelper {
       receiveTimeout: const Duration(seconds: 10),
     ),
   );
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('access_token');
+  }
 
-  Future<ApiResponse> _checkConnectivityAndMakeRequest(Future<Response> Function() request) async {
+  Future<ApiResponse> _checkConnectivityAndMakeRequest(
+      Future<Response> Function() request) async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       return ApiResponse(
@@ -64,7 +70,8 @@ class APIHelper {
     bool isAuthorized = true,
   }) async {
     return _checkConnectivityAndMakeRequest(() => dio.post(endPoint,
-        data: isFormData ? (data != null ? FormData.fromMap(data) : null) : data,
+        data:
+            isFormData ? (data != null ? FormData.fromMap(data) : null) : data,
         options: Options(headers: {
           if (isAuthorized) "Authorization": "Bearer ${LocalData.accessToken}",
           if (!isFormData) "Content-Type": "application/json",
@@ -97,4 +104,3 @@ class APIHelper {
         })));
   }
 }
-

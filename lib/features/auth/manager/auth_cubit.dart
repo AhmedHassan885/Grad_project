@@ -65,15 +65,15 @@ class AuthCubit extends Cubit<AuthState> {
   );
 }
 
-  void onLogout() async {
-    emit(LogoutLoadingState());
-    var response = await repo.logout();
+  // void onLogout() async {
+  //   emit(LogoutLoadingState());
+  //   var response = await repo.logout();
 
-    response.fold(
-      (error) => emit(LogoutErrorState(error)),
-      (message) => emit(LogoutSuccessState(message)),
-    );
-  }
+  //   response.fold(
+  //     (error) => emit(LogoutErrorState(error)),
+  //     (message) => emit(LogoutSuccessState(message)),
+  //   );
+  // }
 
 
   // void onLogin() async {
